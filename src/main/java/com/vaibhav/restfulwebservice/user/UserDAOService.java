@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class UserDAOService {
 
-    private static List<User> users = new ArrayList<>();
+    private static final List<User> users = new ArrayList<>();
     private static int userCount = 100;
 
     static {
@@ -17,7 +17,7 @@ public class UserDAOService {
         users.add(new User(++userCount, "jonah", LocalDate.of(2004, 10, 30)));
         users.add(new User(++userCount, "dina", LocalDate.of(1998, 12, 25)));
         users.add(new User(++userCount, "amy", LocalDate.of(1999, 1, 25)));
-        users.add(new User(++userCount, "chey", LocalDate.of(2004, 4, 28)));
+        users.add(new User(++userCount, "jake", LocalDate.of(2004, 4, 28)));
     }
 
     public List<User> findAll() {
@@ -31,11 +31,15 @@ public class UserDAOService {
     }
 
     public User findOne(int id) {
-        User user = users.stream()
+        return users.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst()
                 .orElse(null);
+    }
 
-        return user;
+    public void deleteUserById(int id) {
+        users.removeIf(
+                user -> user.getId() == id
+        );
     }
 }
