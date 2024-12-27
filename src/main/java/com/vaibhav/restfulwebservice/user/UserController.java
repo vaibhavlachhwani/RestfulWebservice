@@ -25,11 +25,11 @@ public class UserController {
 
     // GET /api/users/{id}
     @GetMapping("/{id}")
-    public User retrieveUser(@PathVariable int id) {
+    public User retrieveUser(@PathVariable int id) throws UserNotFoundException {
         User user = userDAOService.findOne(id);
 
         if (user == null) {
-            return new User();
+            throw new UserNotFoundException("id : " + id);
         }
 
         return user;
