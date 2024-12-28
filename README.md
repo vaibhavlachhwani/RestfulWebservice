@@ -1,146 +1,132 @@
 # REST API Documentation
 
-This README provides a detailed description of the REST API and its endpoints.
+## Overview
+This document provides details about the REST API endpoints available in the application.
+
+### Base URL
+- `http://localhost:8080`
 
 ---
 
-## **Overview**
+## Endpoints
 
-The REST API allows users to manage data and interact with a Hello World service. The API is hosted at:
+### User Controller
 
-**Base URL:** `http://localhost:8080`
-
----
-
-## **Table of Contents**
-
-- [Endpoints](#endpoints)
-  - [User Management](#1-user-management)
-  - [Hello World Service](#2-hello-world-service)
-- [Schemas](#schemas)
-  - [User](#user)
-  - [HelloWorldBean](#helloworldbean)
-- [Usage Examples](#usage-examples)
-
----
-
-## **Endpoints**
-
-### **1. User Management**
-
-#### **GET /api/users**
-
-Retrieve all users.
-
-- **Tags:** `user-controller`
+#### Retrieve All Users
+- **URL:** `/api/users`
+- **Method:** `GET`
 - **Operation ID:** `retrieveAllUsers`
+- **Description:** Retrieve a list of all users.
 - **Responses:**
-  - **200 OK:** Returns an array of user objects.
-
-#### **POST /api/users**
-
-Create a new user.
-
-- **Tags:** `user-controller`
-- **Operation ID:** `createUser`
-- **Request Body:**
-  - Content-Type: `application/json`
-  - Schema:
+  - **200 OK:** Returns an array of users.
     ```json
-    {
-      "username": "string",
-      "dateOfBirth": "date"
-    }
+    [
+      {
+        "id": 1,
+        "username": "string",
+        "dateOfBirth": "YYYY-MM-DD"
+      }
+    ]
     ```
+
+#### Create a User
+- **URL:** `/api/users`
+- **Method:** `POST`
+- **Operation ID:** `createUser`
+- **Description:** Create a new user.
+- **Request Body:**
+  ```json
+  {
+    "username": "string",
+    "dateOfBirth": "YYYY-MM-DD"
+  }
+  ```
 - **Responses:**
   - **200 OK:** Returns the created user object.
 
-#### **GET /api/users/{id}**
-
-Retrieve a specific user by ID.
-
-- **Tags:** `user-controller`
+#### Retrieve a User by ID
+- **URL:** `/api/users/{id}`
+- **Method:** `GET`
 - **Operation ID:** `retrieveUser`
-- **Parameters:**
-  - `id` (path) - _integer_: The unique ID of the user.
+- **Description:** Retrieve a user by their unique ID.
+- **Path Parameters:**
+  - `id` (integer): User ID.
 - **Responses:**
   - **200 OK:** Returns the user object.
+    ```json
+    {
+      "id": 1,
+      "username": "string",
+      "dateOfBirth": "YYYY-MM-DD"
+    }
+    ```
 
-#### **DELETE /api/users/{id}**
-
-Delete a specific user by ID.
-
-- **Tags:** `user-controller`
+#### Delete a User by ID
+- **URL:** `/api/users/{id}`
+- **Method:** `DELETE`
 - **Operation ID:** `deleteUser`
-- **Parameters:**
-  - `id` (path) - _integer_: The unique ID of the user.
+- **Description:** Delete a user by their unique ID.
+- **Path Parameters:**
+  - `id` (integer): User ID.
 - **Responses:**
-  - **200 OK:** Indicates the user was successfully deleted.
+  - **200 OK:** User successfully deleted.
 
 ---
 
-### **2. Hello World Service**
+### Hello World Controller
 
-#### **GET /hello-world**
-
-Returns a "Hello, World!" message.
-
-- **Tags:** `hello-world-controller`
+#### Hello World
+- **URL:** `/hello-world`
+- **Method:** `GET`
 - **Operation ID:** `helloWorld`
+- **Description:** Returns a simple "Hello World" message.
 - **Responses:**
-  - **200 OK:** Returns a simple string message.
+  - **200 OK:** Returns a string message.
+    ```json
+    "Hello World!"
+    ```
 
-#### **GET /hello-world/path-var/{name}**
-
-Returns a Hello World message with a path variable.
-
-- **Tags:** `hello-world-controller`
-- **Operation ID:** `helloWorldBeanPathVar`
-- **Parameters:**
-  - `name` (path) - _string_: The name to include in the message.
-- **Responses:**
-  - **200 OK:** Returns a HelloWorldBean object.
-
-#### **GET /hello-world-bean**
-
-Returns a Hello World message as a bean object.
-
-- **Tags:** `hello-world-controller`
+#### Hello World Bean
+- **URL:** `/hello-world-bean`
+- **Method:** `GET`
 - **Operation ID:** `helloWorldBean`
+- **Description:** Returns a "Hello World" message wrapped in an object.
 - **Responses:**
-  - **200 OK:** Returns a HelloWorldBean object.
+  - **200 OK:** Returns an object with a message property.
+    ```json
+    {
+      "message": "Hello World!"
+    }
+    ```
+
+#### Hello World with Path Variable
+- **URL:** `/hello-world/path-var/{name}`
+- **Method:** `GET`
+- **Operation ID:** `helloWorldBeanPathVar`
+- **Description:** Returns a "Hello World" message customized with the provided name.
+- **Path Parameters:**
+  - `name` (string): The name to include in the message.
+- **Responses:**
+  - **200 OK:** Returns an object with a personalized message.
+    ```json
+    {
+      "message": "Hello, {name}!"
+    }
+    ```
 
 ---
 
-## **Schemas**
+## Schemas
 
-### **User**
-
-Represents a user in the system.
-
+### User
+- **Type:** Object
 - **Required Properties:**
+  - `username` (string)
+  - `dateOfBirth` (string, format: date)
+- **Optional Properties:**
+  - `id` (integer, format: int32)
 
-  - `username` - _string_: The username of the user.
-  - `dateOfBirth` - _string (date)_: The date of birth of the user.
-
+### HelloWorldBean
+- **Type:** Object
 - **Properties:**
-  - `id` - _integer_: The unique ID of the user.
-  - `username` - _string_: The username of the user.
-  - `dateOfBirth` - _string (date)_: The date of birth of the user.
-
-### **HelloWorldBean**
-
-Represents a Hello World message object.
-
-- **Properties:**
-  - `message` - _string_: The Hello World message.
-
----
-
-## **Usage Examples**
-
-### **Retrieve All Users**
-
-```bash
-curl -X GET http://localhost:8080/api/users
-```
+  - `message` (string)
