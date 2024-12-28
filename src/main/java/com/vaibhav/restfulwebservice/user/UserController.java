@@ -1,5 +1,6 @@
 package com.vaibhav.restfulwebservice.user;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -37,7 +38,7 @@ public class UserController {
 
     // POST /api/users
     @PostMapping("")
-    public ResponseEntity<Object> createUser(@RequestBody User user) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
         User savedUser = userDAOService.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()

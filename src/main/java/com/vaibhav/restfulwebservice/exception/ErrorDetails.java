@@ -26,4 +26,16 @@ public class ErrorDetails {
     public String getDetails() {
         return details;
     }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
 }

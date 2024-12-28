@@ -1,10 +1,20 @@
 package com.vaibhav.restfulwebservice.user;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+
 import java.time.LocalDate;
 
 public class User {
+
     private int id;
+
+    @NotBlank(message = "username is required")
     private String username;
+
+    @NotNull(message = "dateOfBirth is required")
+    @PastOrPresent(message = "dateOfBirth is invalid")
     private LocalDate dateOfBirth;
 
     public User(int id, String username, LocalDate dateOfBirth) {
