@@ -27,4 +27,24 @@ public class PersonController {
     public PersonV2 getSecondVersionPersonReqParam() {
         return new PersonV2(new Name("Bob", "Charlie"));
     }
+
+    @GetMapping(path = "/person/header", headers = "X-API-VERSION=1")
+    public PersonV1 getFirstVersionPersonHeader() {
+        return new PersonV1("Bob Charlie");
+    }
+
+    @GetMapping(path = "/person/header", headers = "X-API-VERSION=2")
+    public PersonV2 getSecondVersionPersonHeader() {
+        return new PersonV2(new Name("Bob", "Charlie"));
+    }
+
+    @GetMapping(path = "/person/accept", produces = "application/vnd.company.app-v1+json")
+    public PersonV1 getFirstVersionPersonMediaType() {
+        return new PersonV1("Bob Charlie");
+    }
+
+    @GetMapping(path = "/person/accept ", produces = "application/vnd.company.app-v2+json")
+    public PersonV2 getSecondVersionPersonMediaType() {
+        return new PersonV2(new Name("Bob", "Charlie"));
+    }
 }
