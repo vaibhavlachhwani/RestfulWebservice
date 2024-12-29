@@ -1,6 +1,7 @@
 package com.vaibhav.restfulwebservice.user;
 
 import jakarta.validation.Valid;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -24,8 +27,26 @@ public class UserController {
 
     // GET /api/users
     @GetMapping("")
-    public List<User> retrieveAllUsers() {
-        return userDAOService.findAll();
+    public CollectionModel<EntityModel<User>> retrieveAllUsers() {
+
+        Function<User, EntityModel<User>> mapToEntityModel =
+                user -> {
+                    EntityModel<User> entityModel = EntityModel.of(user);
+
+                    WebMvcLinkBuilder selfLink = linkTo(methodOn(this.getClass()).retrieveUser(user.getId()));
+                    WebMvcLinkBuilder aggregateLink = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+
+                    entityModel.add(selfLink.withSelfRel(), aggregateLink.withRel("users"));
+
+                    return entityModel;
+                };
+
+        List<EntityModel<User>> users = userDAOService.findAll()
+                .stream()
+                .map(mapToEntityModel)
+                .toList();
+
+        return CollectionModel.of(users, linkTo(methodOn(this.getClass()).retrieveAllUsers()).withSelfRel());
     }
 
     // GET /api/users/{id}
@@ -40,7 +61,8 @@ public class UserController {
         EntityModel<User> entityModel = EntityModel.of(user);
 
         WebMvcLinkBuilder links = linkTo(methodOn(this.getClass()).retrieveAllUsers());
-        entityModel.add(links.withRel("all-users"));
+        entityModel.add(linkTo(methodOn(this.getClass()).retrieveUser(id)).withSelfRel());
+        entityModel.add(links.withRel("users"));
 
         return entityModel;
     }
