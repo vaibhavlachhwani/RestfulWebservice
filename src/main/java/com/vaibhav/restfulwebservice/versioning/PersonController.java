@@ -43,7 +43,7 @@ public class PersonController {
         return new PersonV1("Bob Charlie");
     }
 
-    @GetMapping(path = "/person/accept ", produces = "application/vnd.company.app-v2+json")
+    @GetMapping(path = "/person/accept", produces = "application/vnd.company.app-v2+json")
     public PersonV2 getSecondVersionPersonMediaType() {
         return new PersonV2(new Name("Bob", "Charlie"));
     }
