@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,18 +57,24 @@ public class UserController {
     // POST /api/users
     @PostMapping("")
     public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
-        User savedUser = userDAOService.save(user);
+//        User savedUser = userDAOService.save(user);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(savedUser.getId())
-                .toUri();
+        EntityModel<User> savedUser = assembler.toModel(userDAOService.save(user));
 
-        return ResponseEntity.created(location).build();
+//        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+//                .path("/{id}")
+//                .buildAndExpand(savedUser.getId())
+//                .toUri();
+
+        return ResponseEntity
+                .created(savedUser.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(savedUser);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable int id) {
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
         userDAOService.deleteUserById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
