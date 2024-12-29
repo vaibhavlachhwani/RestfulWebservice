@@ -1,6 +1,7 @@
 package com.vaibhav.restfulwebservice.user;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -21,29 +22,20 @@ public class UserController {
 
     private final UserDAOService userDAOService;
 
-    public UserController(UserDAOService userDAOService) {
+    private final UserModelAssembler assembler;
+
+    public UserController(UserDAOService userDAOService, UserModelAssembler assembler) {
         this.userDAOService = userDAOService;
+        this.assembler = assembler;
     }
 
     // GET /api/users
     @GetMapping("")
     public CollectionModel<EntityModel<User>> retrieveAllUsers() {
 
-        Function<User, EntityModel<User>> mapToEntityModel =
-                user -> {
-                    EntityModel<User> entityModel = EntityModel.of(user);
-
-                    WebMvcLinkBuilder selfLink = linkTo(methodOn(this.getClass()).retrieveUser(user.getId()));
-                    WebMvcLinkBuilder aggregateLink = linkTo(methodOn(this.getClass()).retrieveAllUsers());
-
-                    entityModel.add(selfLink.withSelfRel(), aggregateLink.withRel("users"));
-
-                    return entityModel;
-                };
-
         List<EntityModel<User>> users = userDAOService.findAll()
                 .stream()
-                .map(mapToEntityModel)
+                .map(assembler::toModel)
                 .toList();
 
         return CollectionModel.of(users, linkTo(methodOn(this.getClass()).retrieveAllUsers()).withSelfRel());
@@ -58,13 +50,7 @@ public class UserController {
             throw new UserNotFoundException("id : " + id);
         }
 
-        EntityModel<User> entityModel = EntityModel.of(user);
-
-        WebMvcLinkBuilder links = linkTo(methodOn(this.getClass()).retrieveAllUsers());
-        entityModel.add(linkTo(methodOn(this.getClass()).retrieveUser(id)).withSelfRel());
-        entityModel.add(links.withRel("users"));
-
-        return entityModel;
+        return assembler.toModel(user);
     }
 
     // POST /api/users
