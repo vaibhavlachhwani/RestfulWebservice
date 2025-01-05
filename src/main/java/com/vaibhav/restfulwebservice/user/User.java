@@ -1,5 +1,6 @@
 package com.vaibhav.restfulwebservice.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -11,10 +12,12 @@ public class User {
     private int id;
 
     @NotBlank(message = "username is required")
+    @JsonProperty("name")
     private String username;
 
     @NotNull(message = "dateOfBirth is required")
     @PastOrPresent(message = "dateOfBirth is invalid")
+    @JsonProperty("dob")
     private LocalDate dateOfBirth;
 
     public User(int id, String username, LocalDate dateOfBirth) {
