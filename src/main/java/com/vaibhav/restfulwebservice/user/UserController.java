@@ -48,7 +48,7 @@ public class UserController {
         User user = userDAOService.findOne(id);
 
         if (user == null) {
-            throw new UserNotFoundException("id : " + id);
+            throw new UserNotFoundException("No user found for id : " + id);
         }
 
         return assembler.toModel(user);
