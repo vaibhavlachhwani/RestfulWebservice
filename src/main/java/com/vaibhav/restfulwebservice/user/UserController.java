@@ -1,5 +1,8 @@
 package com.vaibhav.restfulwebservice.user;
 
+import com.vaibhav.restfulwebservice.post.Post;
+import com.vaibhav.restfulwebservice.post.PostModelAssembler;
+import com.vaibhav.restfulwebservice.post.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -22,12 +25,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 public class UserController {
 
     private final UserDAOService userDAOService;
-
     private final UserModelAssembler assembler;
+    private final PostService postService;
+    private final PostModelAssembler postModelAssembler;
 
-    public UserController(UserDAOService userDAOService, UserModelAssembler assembler) {
+    public UserController(UserDAOService userDAOService, UserModelAssembler assembler, PostService postService, PostModelAssembler postModelAssembler) {
         this.userDAOService = userDAOService;
         this.assembler = assembler;
+        this.postService = postService;
+        this.postModelAssembler = postModelAssembler;
     }
 
     // GET /api/users
@@ -76,5 +82,20 @@ public class UserController {
         userDAOService.deleteUserById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/posts")
+    public CollectionModel<EntityModel<Post>> retrieveAllPostsByUsers(@PathVariable int id) {
+
+        if (userDAOService.findOne(id) == null) {
+            throw new UserNotFoundException("No user found for id : " + id);
+        }
+
+        List<EntityModel<Post>> posts = postService.findAllByUser(id)
+                .stream()
+                .map(postModelAssembler::toModel)
+                .toList();
+
+        return CollectionModel.of(posts, linkTo(methodOn(this.getClass()).retrieveAllUsers()).withSelfRel());
     }
 }
