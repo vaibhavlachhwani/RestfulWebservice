@@ -49,7 +49,7 @@ public class PostController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createPost(Post post) {
+    public ResponseEntity<?> createPost(@RequestBody Post post) {
         EntityModel<Post> savedPost = assembler.toModel(postService.save(post));
 
         return ResponseEntity
