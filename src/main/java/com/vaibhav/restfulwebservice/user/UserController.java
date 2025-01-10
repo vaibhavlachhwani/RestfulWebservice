@@ -98,4 +98,20 @@ public class UserController {
 
         return CollectionModel.of(posts, linkTo(methodOn(this.getClass()).retrieveAllUsers()).withSelfRel());
     }
+
+    @PostMapping("/{id}/posts")
+    public ResponseEntity<?> createPostForUser(@PathVariable int id, @RequestBody Post post) {
+        User user = userDAOService.findOne(id);
+
+        if (user == null) {
+            throw new UserNotFoundException("No user found for id : " + id);
+        }
+
+        post.setUser(user);
+        EntityModel<Post> savedPost = postModelAssembler.toModel(postService.save(post));
+
+        return ResponseEntity
+                .created(savedPost.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(savedPost);
+    }
 }
