@@ -41,6 +41,14 @@ public class Post {
         this.content = content;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Post{");

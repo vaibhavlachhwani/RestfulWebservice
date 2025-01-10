@@ -29,7 +29,7 @@ public class User {
 //    @JsonProperty("dob")
     private LocalDate dateOfBirth;
 
-    @OneToMany()
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Post> posts;
 
@@ -64,6 +64,14 @@ public class User {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     @Override
